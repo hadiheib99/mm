@@ -2,7 +2,7 @@ from handle_events import handle_events
 from connect_to_google_cloud import connect_to_google_cloud
 from create_dockerfile import create_dockerfile
 from integrate_kafka import integrate_kafka
-from kafka_producer import create_kafka_producer, send_kafka_message
+from producer import create_kafka_producer, send_kafka_message
 from kafka_consumer import create_kafka_consumer, consume_kafka_messages
 from fetch_model_from_registry import fetch_model_from_registry
 from manage_model_versions import promote_model_version

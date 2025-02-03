@@ -8,7 +8,7 @@ WORKDIR /app
 RUN pip install --upgrade pip
 
 # Check if requirements.txt exists before copying
-COPY requirements.txt .
+COPY requirements.txt /app/
 
 # Run pip install only if requirements.txt exists
 RUN test -f "/app/requirements.txt" && pip install --no-cache-dir -r /app/requirements.txt || echo "⚠️ Skipping pip install: requirements.txt not found."
@@ -17,4 +17,4 @@ RUN test -f "/app/requirements.txt" && pip install --no-cache-dir -r /app/requir
 COPY . /app/
 
 # Default command (Can be overridden in docker-compose)
-CMD ["python", "kafka_producer.py"]
+CMD ["python", "/app/producer.py"]
