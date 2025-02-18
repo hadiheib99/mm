@@ -1,16 +1,30 @@
+import logging
 from confluent_kafka import Producer
 import time
+import os
 
-producer = Producer({'bootstrap.servers': 'localhost:9092'})
+logging.basicConfig(level=logging.INFO)
+
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+producer = Producer({'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS})
+
+logging.info("🔄 Kafka Producer Started...")
 
 def send_message():
-    producer.produce("models-topic", key="test", value="Hello from Python!")
-    producer.flush()
-    print("✅ Message sent to Kafka!")
+    try:
+        producer.produce("ESM-topic", key="test", value="Hello from Python!", callback=delivery_report)
+        producer.flush()
+        logging.info("✅ Message sent to Kafka!")
+    except Exception as e:
+        logging.error(f"Failed to send message: {e}")
 
-print("🔄 Kafka Producer Started...")
+def delivery_report(err, msg):
+    if err is not None:
+        logging.error(f"Delivery failed for record {msg.key()}: {err}")
+    else:
+        logging.info(f"Record {msg.key()} successfully produced to {msg.topic()} [{msg.partition()}]")
 
-# Keep the producer running
+# Loop to send messages every 5 seconds
 while True:
     send_message()
-    time.sleep(5)  # Send a message every 5 seconds
+    time.sleep(5)
